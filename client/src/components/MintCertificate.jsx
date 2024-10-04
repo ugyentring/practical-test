@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getContract } from "../utils/ethers";
+
 const MintCertificate = () => {
   const [courseTitle, setCourseTitle] = useState("");
   const [issueDate, setIssueDate] = useState("");
@@ -27,21 +28,22 @@ const MintCertificate = () => {
         return;
       }
 
-      const certContract = getContract();
-      console.log("Minting certificate with:", {
-        address: window.ethereum.selectedAddress,
+      const certContract = await getContract(); // Await the contract instance
+      const gas = await certContract.estimateGas.mintCertificate(
+        window.ethereum.selectedAddress,
         courseTitle,
         issueDate,
         expiryDate,
-        duration,
-      });
+        duration
+      );
 
       const tx = await certContract.mintCertificate(
         window.ethereum.selectedAddress,
         courseTitle,
         issueDate,
         expiryDate,
-        duration
+        duration,
+        { gas }
       );
 
       await tx.wait();
