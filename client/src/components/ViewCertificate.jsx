@@ -2,16 +2,17 @@ import { useState } from "react";
 import { getContract } from "../utils/ethers";
 
 const ViewCertificate = () => {
-  const [tokenId, setTokenId] = useState("");
+  const [courseId, setCourseId] = useState("");
   const [certificate, setCertificate] = useState(null);
 
   const viewCertificate = async () => {
     try {
       const certContract = getContract();
-      const certDetails = await certContract.viewCertificate(tokenId);
+      const certDetails = await certContract.viewCertificate(courseId);
       setCertificate(certDetails);
     } catch (error) {
       console.error("Error fetching certificate:", error);
+      alert("Could not fetch certificate. Please check the Course ID.");
     }
   };
 
@@ -20,9 +21,9 @@ const ViewCertificate = () => {
       <h1 className="text-2xl font-bold">View Certificate</h1>
       <input
         type="text"
-        placeholder="Certificate ID (Token ID)"
-        value={tokenId}
-        onChange={(e) => setTokenId(e.target.value)}
+        placeholder="Course ID"
+        value={courseId}
+        onChange={(e) => setCourseId(e.target.value)}
         className="border border-gray-300 p-2 rounded-md w-full max-w-xs"
       />
       <button

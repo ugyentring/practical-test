@@ -3,6 +3,8 @@ import { getContract } from "../utils/ethers";
 
 const MintCertificate = () => {
   const [courseTitle, setCourseTitle] = useState("");
+  const [courseId, setCourseId] = useState("");
+  const [organization] = useState("Druk Information and Technology");
   const [issueDate, setIssueDate] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [duration, setDuration] = useState("");
@@ -18,7 +20,7 @@ const MintCertificate = () => {
 
       await window.ethereum.request({ method: "eth_requestAccounts" });
 
-      if (!courseTitle || !issueDate || !expiryDate || !duration) {
+      if (!courseId || !courseTitle || !issueDate || !expiryDate || !duration) {
         alert("Please fill in all fields.");
         return;
       }
@@ -28,8 +30,18 @@ const MintCertificate = () => {
         return;
       }
 
-      const certContract = await getContract(); // Await the contract instance
-      const gas = await certContract.estimateGas.mintCertificate(
+      const certContract = await getContract();
+      console.log("Minting certificate with:", {
+        address: window.ethereum.selectedAddress,
+        courseId,
+        organization,
+        courseTitle,
+        issueDate,
+        expiryDate,
+        duration,
+      });
+
+      const gasEstimate = await certContract.estimateGas.mintCertificate(
         window.ethereum.selectedAddress,
         courseTitle,
         issueDate,
@@ -43,7 +55,7 @@ const MintCertificate = () => {
         issueDate,
         expiryDate,
         duration,
-        { gas }
+        { gasLimit: gasEstimate }
       );
 
       await tx.wait();
@@ -62,6 +74,20 @@ const MintCertificate = () => {
   return (
     <div className="flex flex-col space-y-4">
       <h1 className="text-xl font-bold">Mint Certificate</h1>
+      <input
+        type="text"
+        placeholder="Course ID"
+        value={courseId}
+        onChange={(e) => setCourseId(e.target.value)}
+        className="border p-2 rounded-md w-full"
+      />
+      <input
+        type="text"
+        placeholder="Organization (Fixed)"
+        value={organization}
+        readOnly
+        className="border p-2 rounded-md w-full"
+      />
       <input
         type="text"
         placeholder="Course Title"
