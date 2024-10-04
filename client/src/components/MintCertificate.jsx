@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { getContract } from "../utils/ethers";
-
 const MintCertificate = () => {
   const [courseTitle, setCourseTitle] = useState("");
   const [issueDate, setIssueDate] = useState("");
@@ -11,6 +10,29 @@ const MintCertificate = () => {
   const mintCertificate = async () => {
     setIsMinting(true);
     try {
+      // Check if Ethereum is available
+      if (!window.ethereum) {
+        alert("Please install MetaMask to use this feature.");
+        setIsMinting(false);
+        return;
+      }
+
+      // Request account access if needed
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      // Validate inputs
+      if (!courseTitle || !issueDate || !expiryDate || !duration) {
+        alert("Please fill in all fields.");
+        setIsMinting(false);
+        return;
+      }
+
+      if (new Date(issueDate) >= new Date(expiryDate)) {
+        alert("Expiry date must be after issue date.");
+        setIsMinting(false);
+        return;
+      }
+
       const certContract = getContract();
       const tx = await certContract.mintCertificate(
         window.ethereum.selectedAddress,
@@ -20,9 +42,12 @@ const MintCertificate = () => {
         duration
       );
       await tx.wait();
-      alert("certificate ninted successfully!");
+      alert("Certificate minted successfully!");
     } catch (error) {
       console.error("Error minting certificate:", error);
+      alert(
+        "An error occurred while minting the certificate. Please try again."
+      );
     } finally {
       setIsMinting(false);
     }

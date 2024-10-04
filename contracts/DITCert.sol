@@ -22,7 +22,7 @@ contract DITCert is ERC721, Ownable {
 
     constructor() ERC721("Druk Information and Technology NFT Certification", "DITCert") {}
 
-    // Mint Certificate (only contract owner can mint)
+    //mint Certificate
     function mintCertificate(
         address recipient,
         string memory courseTitle,
