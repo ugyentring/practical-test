@@ -12,7 +12,12 @@ export const getProvider = () => {
 };
 
 export const getContract = () => {
-  const provider = getProvider();
-  const signer = provider.getSigner();
-  return new ethers.Contract(contractAddress, DITCertAbi.abi, signer);
+  try {
+    const provider = getProvider();
+    const signer = provider.getSigner();
+    return new ethers.Contract(contractAddress, DITCertAbi.abi, signer);
+  } catch (error) {
+    console.error("Error getting contract:", error);
+    throw new Error("Failed to get contract.");
+  }
 };

@@ -16,17 +16,27 @@ const CheckOwnership = () => {
   };
 
   return (
-    <div>
-      <h1>Check Certificate Ownership</h1>
+    <div className="flex flex-col space-y-4 p-4">
+      <h1 className="text-xl font-bold">Check Certificate Ownership</h1>
       <input
         type="text"
         placeholder="Certificate ID (Token ID)"
         value={tokenId}
         onChange={(e) => setTokenId(e.target.value)}
+        className="border p-2 rounded-md w-full"
       />
-      <button onClick={checkOwner}>Check Owner</button>
+      <button
+        onClick={checkOwner}
+        className="bg-black text-white p-2 rounded-md w-full"
+      >
+        Check Owner
+      </button>
 
-      {owner && <p>Owner Address: {owner}</p>}
+      {owner && (
+        <p className="mt-2 text-green-600">
+          Owner Address: <span className="font-bold">{owner}</span>
+        </p>
+      )}
     </div>
   );
 };
